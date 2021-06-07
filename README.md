@@ -1,5 +1,5 @@
 # AtcrowdFunding
-一阶段 : 三大框架 + Linux（mysql）  + redis + maven + jQuery     后台系统管理
+	一阶段 : 三大框架 + Linux（mysql）  + redis + maven + jQuery     后台系统管理
 	
 			完成四个模块开发 - 都是 非常简单的CRUD
 				用户管理（同步开发）
