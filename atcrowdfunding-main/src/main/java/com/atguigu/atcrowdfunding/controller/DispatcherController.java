@@ -24,6 +24,8 @@ import com.atguigu.atcrowdfunding.util.Const;
 public class DispatcherController {
 	
 
+	// 测试Git
+	
 	// spring自动注入相应的实现类
 	@Autowired
 	TAdminService adminService;
