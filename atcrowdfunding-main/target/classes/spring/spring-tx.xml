@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<context:property-placeholder
+		location="classpath:/config/jdbc.properties" />
+
+
+	<!-- 阿里的数据库连接池Druid：获取数据库的操作 -->
+	<bean id="dataSource"
+		class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="username" value="${datasource.username}"></property>
+		<property name="password" value="${datasource.password}"></property>
+		<property name="url" value="${datasource.url}"></property>
+		<property name="driverClassName" value="${datasource.driver}"></property>
+	</bean>
+
+	<!-- 事务管理器：控制着数据源 -->
+	<bean id="tm"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- 配置版的事务切面 -->
+	<aop:config>
+		<!-- *任意返回值 service包下 ..service下的任意包 *任意类 .*任意方法 (..)任意参数 -->
+		<aop:pointcut expression="execution(* com.atguigu.atcrowdfunding.service..*.*(..))" id="point" />
+		<!-- advice-ref：关联增强事务 pointcut-ref：关联事务的切入点 -->
+		<aop:advisor advice-ref="tx" pointcut-ref="point" />
+	</aop:config>
+
+	<!-- 配置事务增强 -->
+	<tx:advice transaction-manager="tm" id="tx">
+		<!-- 事务属性 -->
+		<tx:attributes>
+			<!-- 所有 方法都是事务 -->
+			<tx:method name="*" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="list*" read-only="true" />
+
+			<!--增删改 -->
+			<tx:method name="insert*" timeout="5000" rollback-for="java.lang.Exception"/>
+			<tx:method name="add*" timeout="5000" />
+			<tx:method name="update*" timeout="5000" />
+			<tx:method name="delete*" timeout="5000" />
+		</tx:attributes>
+	</tx:advice>
+
+</beans>

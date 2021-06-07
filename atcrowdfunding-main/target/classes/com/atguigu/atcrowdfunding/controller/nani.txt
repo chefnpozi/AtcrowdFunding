@@ -1,0 +1,52 @@
+//	@RequestMapping("/main")
+//	public String main(HttpSession session) {
+//		// 请求从jsp过来的时候，会在session中注入一些信息，我们通过形参的方式取出来
+//		log.debug("跳转到后台系统main页面...");
+//		
+//		if (session == null) {
+//			// 可能是时间过长，session失效了
+//			// 加入redirect:前缀，是为了进行重定向
+//			return "redirect:/login";
+//		}
+//		// session未失效,存放父菜单
+//		// 这个父菜单是啥？再看一下
+//		List<TMenu> menuList = (List<TMenu>)session.getAttribute("menuList");
+//		
+//		if (menuList == null) {
+//			// 为什么要 == null 才执行代码？
+//			menuList = menuService.listMenuAll();
+//			session.setAttribute("menuList", menuList);
+//		}
+//		return "main";
+//	}
+//	
+//	@RequestMapping("/logout")
+//	public String logout(HttpSession session) {
+//		log.debug("注销系统");
+//		
+//		if (session != null) {
+//			// 用户要注销了，记得把相关信息进行清空
+//			session.removeAttribute(Const.LOGIN_ADMIN);
+//			// 这个操作是干嘛的，查一下
+//			session.invalidate();
+//		}
+//		
+//		// 注销信息后，重定向到主页面
+//		return "redirect:/index";
+//	}
+//	
+
+//		// model 是做什么的？这个还是Spring自带的
+//		log.debug("开始登录...");
+//		// 记录一下此时获取的 账户 和 密码 ，并在控制台打印输出
+//		log.debug("loginacct = {}", loginacct);
+//		log.debug("userpswd = {}", userpswd);
+//		
+//		// 从请求中把所有的参数进行打包，这样代码健壮性更好
+//		HashMap<String, Object> map = new HashMap<String, Object>();
+//		map.put("loginacct", loginacct);
+//		map.put("userpswd", userpswd);
+//		
+//		// 拿到  账户 和 密码 了，在数据库中进行校验，尝试登录
+//		// 下面看着视频写，这个标准答案好像有点不一样
+//		return null; 
