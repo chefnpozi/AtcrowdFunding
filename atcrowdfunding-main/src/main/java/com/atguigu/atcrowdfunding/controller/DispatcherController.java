@@ -54,11 +54,29 @@ public class DispatcherController {
 		
 		// 进行一些操作，使得菜单可以刷新出来，这里连接数据库的 菜单表
 		// 存放父菜单
-		List<TMenu> menuList = menuService.listMenuAll();
 		// 多次加载页面，只需加载一次菜单树
-		session.setAttribute("menuList", menuList);
+		if(session == null) {
+			// session为null，去登录一下，然后创建session
+			return "redirect:/login";
+		}
+		// 目前session不为空，先去拿数据，在判断数据是否存在
+		List<TMenu> menuList = (List<TMenu>)session.getAttribute("menuList");
+				
+		if(menuList == null) {
+			// 拿到数据并存入session
+			menuList = menuService.listMenuAll();
+			session.setAttribute("menuList", menuList);
+		}
+		// debug
+//		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//		System.out.println(menuList);
+//		for (TMenu tMenu : menuList) {
+//			System.out.println(tMenu.getName());
+//			System.out.println(tMenu.getUrl());
+//		}
+//		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		
-		
+		// 此时 session 中已有数据，这样就不会频繁的去数据库拿数据了，减轻了数据库的压力
 		
 		// return 是进行  视图解析
 		// 多对 main 进行一次映射的原因是防止多次刷新页面时，多次登录

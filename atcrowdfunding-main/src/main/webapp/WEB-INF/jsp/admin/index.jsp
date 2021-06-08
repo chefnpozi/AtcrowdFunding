@@ -40,15 +40,24 @@
 				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 数据列表</h3>
 			  </div>
 			  <div class="panel-body">
-<form class="form-inline" role="form" style="float:left;">
+			  
+			  
+<form id="queryForm" class="form-inline" role="form" style="float:left;" action="${PATH}/admin/index" method="post">
   <div class="form-group has-feedback">
     <div class="input-group">
       <div class="input-group-addon">查询条件</div>
-      <input class="form-control has-success" type="text" placeholder="请输入查询条件">
+      <%-- 把condition传到后台，进行模糊查询，这个条件通过form表单，使用post传给action哪个路径 ,
+      condition与request mapping 中参数相同，这样就可以之间传参
+      condition 想要回显，很简单，因为是转发，所以condition在请求域中，param获取即可 .
+       --%>
+      <input class="form-control has-success" name="condition" value="${param.condition}" type="text" placeholder="请输入查询条件">
     </div>
   </div>
-  <button type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
+  <%-- 给一个点击事件，通过这个id提交这个表单 --%>
+  <button type="button" class="btn btn-warning" onclick="$('#queryForm').submit()"><i class="glyphicon glyphicon-search"></i> 查询</button>
 </form>
+
+
 <button type="button" class="btn btn-danger" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
 <button type="button" class="btn btn-primary" style="float:right;" onclick="window.location.href='${PATH}/admin/toAdd'"><i class="glyphicon glyphicon-plus"></i> 新增</button>
 <br>
@@ -95,14 +104,16 @@
 				     <td colspan="6" align="center">
 						<ul class="pagination">
 								
-								<%-- 怎么判断当前是否是第一页，去看PageInfo源码是怎样设计的--%>
+								<%-- 怎么判断当前是否是第一页，去看PageInfo源码是怎样设计的
+										模糊查询要随着分页信息走，把param.condition 作为参数传入
+								--%>
 								<c:if test="${page.isFirstPage}">
 									<li class="disabled"><a href="#">上一页</a></li>
 								</c:if>
 								
 								<c:if test="${!page.isFirstPage}">
 									<%-- ?用来传入pageNum这个参数  --%>
-									<li><a href="${PATH}/admin/index?pageNum=${page.pageNum-1}">上一页</a></li>
+									<li><a href="${PATH}/admin/index?condition=${param.condition}&pageNum=${page.pageNum-1}">上一页</a></li>
 								</c:if>
 								
 								<%-- 遍历的是导航页号的数组  items肯定是要遍历一个容器，去pageInfo中找一找合适的容器--%>
@@ -113,12 +124,12 @@
 									看当前页的页编号是否与容器中遍历的当前编号重合，重合的话要高亮
 									--%>
 									<c:if test="${page.pageNum == num}">
-										<li class="active"><a href="${PATH}/admin/index?pageNum=${num}">${num}<span class="sr-only">(current)</span></a></li>
+										<li class="active"><a href="${PATH}/admin/index?condition=${param.condition}&pageNum=${num}">${num}<span class="sr-only">(current)</span></a></li>
 									</c:if>
 									
 									<%-- 当前页的编号与 遍历的num不相等，正常显示 --%>
 									<c:if test="${page.pageNum != num}">
-										<li><a href="${PATH}/admin/index?pageNum=${num}">${num}</a></li>
+										<li><a href="${PATH}/admin/index?condition=${param.condition}&pageNum=${num}">${num}</a></li>
 									</c:if>
 									
 								</c:forEach>
@@ -129,7 +140,7 @@
 								</c:if>
 								
 								<c:if test="${!page.isLastPage}">
-									<li><a href="${PATH}/admin/index?pageNum=${page.pageNum+1}">下一页</a></li>
+									<li><a href="${PATH}/admin/index?condition=${param.condition}&pageNum=${page.pageNum+1}">下一页</a></li>
 								</c:if>
 						</ul>
 					 </td>
