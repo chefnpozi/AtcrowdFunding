@@ -58,7 +58,7 @@
 </form>
 
 
-<button type="button" class="btn btn-danger" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
+<button id="deleteBatchBtn" type="button" class="btn btn-danger" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
 <button type="button" class="btn btn-primary" style="float:right;" onclick="window.location.href='${PATH}/admin/toAdd'"><i class="glyphicon glyphicon-plus"></i> 新增</button>
 <br>
  <hr style="clear:both;">
@@ -67,7 +67,8 @@
               <thead>
                 <tr >
                   <th width="30">#</th>
-				  <th width="30"><input type="checkbox"></th>
+                  <%-- 先找到这个复选框 --%>
+				  <th width="30"><input id="selectAll" type="checkbox"></th>
                   <th>账号</th>
                   <th>名称</th>
                   <th>邮箱地址</th>
@@ -83,7 +84,8 @@
 	                <tr>
 	                <%-- status记录状态，count记录编号--%>
 	                  <td>${status.count}</td>
-					  <td><input type="checkbox"></td>
+	                  <%-- 带一个属性id，好对当前的checkedBox进行删除 --%>
+					  <td><input type="checkbox" adminId="${admin.id}" ></td>
 	                  <td>${admin.loginacct}</td>
 	                  <td>${admin.username}</td>
 	                  <td>${admin.email}</td>
@@ -172,6 +174,8 @@
 				});
             });
             
+            
+            // .deleteBtnClass通过找到这个class定位到这个按钮，增加相应的click事件 
             $(".deleteBtnClass").click(function(){
             	
             	// 拿到当前对象的adminId属性
@@ -192,6 +196,84 @@
             	});
             	
             });
+            
+            
+            
+            
+            // 由id选择器找到这个复选框，给它一个点击事件
+            $("#selectAll").click(function(){
+            	// 一点表头的复选框，表体中的复选框要和表头的复选框状态一致
+            	// 因为这个页面只有一个表体tbody，可以由元素选择器选出tbody
+            	// " input[type="checkbox"]"选出tbody的子元素，其中的类型为checkbox的input，同样是元素选择器
+            	// $("tbody input[type="checkbox"]").attr("checked", this.checked);
+            	// 选中相应的元素，把checked属性赋值为表头的状态,this表示#selectAll这个对象，及表头
+            	// prop可以多刷几遍，解决了attr的bug
+            	$("tbody input[type='checkbox']").prop("checked",this.checked);
+            	// 单引号和双引号不要同时使用
+            });
+            
+            // 有id选择器选择到deleteBatchBtn这个按钮,给它一个点击事件
+            $("#deleteBatchBtn").click(function(){
+            	// 准备批量删除checked == true 的表体(tbody)中的用户，到时候还要给一个弹层
+            	
+            	// : 是用来把元素集中符合要求的元素拿到，这里拿的是已被选中复选框的元素
+            	// : js代码还是别老着用空格了，好伤心啊
+            	var checkedBoxList = $("tbody input[type='checkbox']:checked");
+            	
+            	if(checkedBoxList.length==0) {
+            		// 集合长度为0，证明没有选中元素，此时应进行弹层提示
+            		layer.msg("请先选中用户，再进行删除！");
+            		return false;
+            	};
+            	
+            	// 传给后台，进行删除
+            	// 我们传一个串 var ids = '1,2,3,4,5';
+            	// 然后用,进行分解
+            	
+            	var ids='';
+            	// index 表示数组下标， element表示迭代集合中的每一个元素
+            	$.each(checkedBoxList,function(index, element){
+            		// 迭代的这个element是DOM对象$(element)转成jQuery对象，取出id属性
+            		var curId = $(element).attr("adminId");
+            		
+            		// 在前面拼这个 , 第一次不拼就完事了
+            		if(index!=0) {
+            			ids+=',';
+            		}
+            		ids+=curId;
+            		
+            	});
+            	// 通过 var array = new array();
+            	// array.push(adminId); array.join(","); 这样拼串效果一样，比较优雅
+            	
+            	
+            	// 把拼好的字符串传给后台
+            	// window.location.href="${PATH}/admin/doDeleteBatch?ids="+ids;
+            	
+            	layer.confirm('您是否要删除这些用户信息？', {
+              	  btn: ['确认','撤销'] //按钮
+              	}, function(index){
+              		
+              		// js的注释还是// 
+              		// 跳转到哪个链接,id原来是循环的，不能那样取，先通过参数传过来，然后字符串拼接
+              		window.location.href="${PATH}/admin/doDeleteBatch?pageNum=${page.pageNum}&ids="+ids;
+              		
+              	  	layer.close(index);
+              	}, function(index){
+              	  	// 撤销的话什么也不做，只是关闭弹出框。
+              		layer.close(index);
+              	});
+            	
+            });
+            
+            
+            
+            
+            
+            
+            
+            
+            
         </script>
         <%-- .deleteBtnClass通过找到这个class定位到这个按钮，增加相应的click事件 --%>
   </body>
