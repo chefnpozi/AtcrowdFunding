@@ -3,6 +3,8 @@ package com.atguigu.atcrowdfunding.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +22,20 @@ public class TAdminController {
 	@Autowired
 	TAdminService adminService;
 
+	// 日志
+	Logger log = LoggerFactory.getLogger(TAdminController.class);
+	
 	@RequestMapping("/admin/index")
 	public String index(@RequestParam(value="pageNum",required=false,defaultValue="1")Integer pageNum,
 						@RequestParam(value="pageSize",required=false,defaultValue="2")Integer pageSize,
-						Model model) {
+						Model model,
+						@RequestParam(value="condition",required=false,defaultValue="")String condition) {
+		
+		log.debug("pageNum={}", pageNum);
+		log.debug("pageSize={}", pageSize);
+		log.debug("condition={}", condition);
+		
+		
 		// request mapping 应与 数据库中的url相关
 		// 不传参数的话有默认值pageNum=1，pageSize=10
 		
@@ -31,6 +43,8 @@ public class TAdminController {
 		
 		// 创建一个map，用于放置参数
 		Map<String, Object> paraMap = new HashMap<String, Object>();
+		
+		paraMap.put("condition", condition);
 		
 		// 传回当前的分页,先写函数，在创建函数实体
 		// PageInfo 放的是分页的信息，每页中显示的是用户信息的列表，故泛型就是TAdmin

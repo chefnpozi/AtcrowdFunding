@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.atguigu.atcrowdfunding.bean.TAdmin;
 import com.atguigu.atcrowdfunding.bean.TAdminExample;
+import com.atguigu.atcrowdfunding.bean.TAdminExample.Criteria;
 import com.atguigu.atcrowdfunding.exception.LoginException;
 import com.atguigu.atcrowdfunding.mapper.TAdminMapper;
 import com.atguigu.atcrowdfunding.service.TAdminService;
@@ -69,6 +70,24 @@ public class TAdminServiceImpl implements TAdminService {
 	public PageInfo<TAdmin> listAdminPage(Map<String, Object> paraMap) {
 		
 		TAdminExample example = new TAdminExample();
+		
+		// 如果没有给condition赋 空串 值，这里强转就会出现空指针异常
+		String condition = (String)paraMap.get("condition");
+		// 拿出模糊查询的条件，首先先判空
+		if (!condition.equals("")) { // 如果条件不为空，给example绑定条件
+			// 条件是进行模糊匹配，对于用户名、邮箱、账号都带有相同条件的，我们把它查出来
+			Criteria criteria1 = example.createCriteria();
+			Criteria criteria2 = example.createCriteria();
+			Criteria criteria3 = example.createCriteria();
+			// 创建三个条件
+			criteria1.andLoginacctLike("%"+condition+"%");
+			criteria2.andUsernameLike("%"+condition+"%");
+			criteria3.andEmailLike("%"+condition+"%");
+			// 将三个条件进行或操作
+			example.or(criteria1);
+			example.or(criteria2);
+			example.or(criteria3);
+		}
 		
 		// 倒序排序,因为已有order by 所以直接写createtime desc
 		example.setOrderByClause("createtime desc");
