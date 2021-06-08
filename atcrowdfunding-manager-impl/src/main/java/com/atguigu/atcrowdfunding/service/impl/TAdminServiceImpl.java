@@ -1,5 +1,6 @@
 package com.atguigu.atcrowdfunding.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,6 +136,14 @@ public class TAdminServiceImpl implements TAdminService {
 	public void deleteTAdmin(Integer id) {
 		// 根据id从数据库删除该用户
 		adminMapper.deleteByPrimaryKey(id);
+	}
+
+	@Override
+	public void deleteBatchTAdmin(ArrayList<Integer> array) {
+		// array 是由id组成的数组，把这个集合中的id代表的用户信息 进行批量删除
+		
+		// 循环效率不高，自己写个函数，写一个动态SQL语句
+		adminMapper.deleteBatch(array);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.atguigu.atcrowdfunding.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,6 +105,26 @@ public class TAdminController {
 		// 接收 id 和 pageNum 两个同名参数
 		
 		adminService.deleteTAdmin(id);
+		// 删除该用户之后，重定向到index界面的 pageNum页面
+		// 重定向是找的另一个 request mapping 不是根据spring前缀后缀字符串拼接
+		return "redirect:/admin/index?pageNum="+pageNum;
+	}
+	
+	@RequestMapping("/admin/doDeleteBatch")
+	public String doDeleteBatch(String ids, Integer pageNum) {
+		// 接收  ids 把字符串 按 , 分解后就得到要删除的id
+		
+		ArrayList<Integer> array = new ArrayList<Integer>();
+		
+		String[] strs = ids.split(","); // 分解字符串
+		for (String str : strs) {
+			int id = Integer.parseInt(str);
+			array.add(id);	// 拿到id组成的集合
+		}
+		
+		// 批量删除
+		adminService.deleteBatchTAdmin(array);
+		
 		// 删除该用户之后，重定向到index界面的 pageNum页面
 		// 重定向是找的另一个 request mapping 不是根据spring前缀后缀字符串拼接
 		return "redirect:/admin/index?pageNum="+pageNum;

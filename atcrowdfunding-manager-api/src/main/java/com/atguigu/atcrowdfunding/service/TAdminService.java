@@ -1,5 +1,6 @@
 package com.atguigu.atcrowdfunding.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public interface TAdminService {
 	void updateTAdmin(TAdmin admin);
 
 	void deleteTAdmin(Integer id);
+
+	void deleteBatchTAdmin(ArrayList<Integer> array);
 	
 
 }

@@ -2,6 +2,8 @@ package com.atguigu.atcrowdfunding.mapper;
 
 import com.atguigu.atcrowdfunding.bean.TAdmin;
 import com.atguigu.atcrowdfunding.bean.TAdminExample;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +29,7 @@ public interface TAdminMapper {
     int updateByPrimaryKeySelective(TAdmin record);
 
     int updateByPrimaryKey(TAdmin record);
+
+    // 按照要求加上注解，写出该接口的映射语句
+	void deleteBatch(@Param("array") ArrayList<Integer> array);
 }
