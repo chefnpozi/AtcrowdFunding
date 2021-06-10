@@ -409,14 +409,14 @@
         		// 同修改
         	$('tbody').on('click','.deleteClass',function(){
         		
-        		
+        		// 取出id，在数据库删除此条信息，然后刷新页面
+        		// 不能使用样式类，因为该页中的每一条数据都是该样式类，这样取的id就永远是第一条数据，永远删第一个
+        		var id = $(this).attr("roleId");
         		//询问框
             	layer.confirm('您是否要删除此条信息？', {
             	  btn: ['确认','撤销'] //按钮
             	}, function(index){
             		
-            		// 取出id，在数据库删除此条信息，然后刷新页面
-            		var id = $('.deleteClass').attr("roleId");
             		// 把id传给后台进行删除
             		$.post("${PATH}/role/doDelete",{id:id},function(result){
             			// 返回 “ok” 便是删除成功
