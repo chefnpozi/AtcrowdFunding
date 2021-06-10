@@ -9,4 +9,12 @@ public interface TRoleService {
 
 	PageInfo<TRole> listRolePage(HashMap<String, Object> paramMap);
 
+	void saveTRole(TRole role);
+
+	TRole getTRoleById(Integer id);
+
+	void updateTRole(TRole role);
+
+	void deleteTRole(Integer id);
+
 }

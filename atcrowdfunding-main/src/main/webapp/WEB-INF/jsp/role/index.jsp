@@ -42,13 +42,13 @@
   <div class="form-group has-feedback">
     <div class="input-group">
       <div class="input-group-addon">查询条件</div>
-      <input class="form-control has-success" type="text" placeholder="请输入查询条件">
+      <input id="condition" class="form-control has-success" type="text" placeholder="请输入查询条件">
     </div>
   </div>
-  <button type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
+  <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
 </form>
 <button type="button" class="btn btn-danger" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
-<button type="button" class="btn btn-primary" style="float:right;" onclick="window.location.href='form.html'"><i class="glyphicon glyphicon-plus"></i> 新增</button>
+<button id="addBtn" type="button" class="btn btn-primary" style="float:right;"><i class="glyphicon glyphicon-plus"></i> 新增</button>
 <br>
  <hr style="clear:both;">
           <div class="table-responsive">
@@ -82,7 +82,67 @@
         </div>
       </div>
     </div>
-
+  
+    
+	<!-- 执行添加操作，Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">添加角色(✿◡‿◡)</h4>
+	      </div>
+	      <div class="modal-body">
+	      
+	        
+	        
+				  <div class="form-group">
+					<label for="exampleInputPassword1">角色名称</label>
+					<input type="text" class="form-control" id="name" name="name" placeholder="请输入角色名称">
+				  </div>
+				  
+			
+			
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	        <button id="saveBtn" type="button" class="btn btn-primary">保存 (╯‵□′)╯︵┻━┻</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<!-- 执行修改操作，Modal -->
+	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">修改角色(*^▽^*)</h4>
+	      </div>
+	      <div class="modal-body">
+	      
+	        
+	        
+				  <div class="form-group">
+					<label for="exampleInputPassword1">角色名称</label>
+					<input type="text" class="form-control" id="name" name="name" placeholder="请输入角色名称">
+					<!-- 隐含域用于存储当前要修改的数据的id -->
+					<input type="hidden" name="id" >
+				  </div>
+				  
+			
+			
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭o(╥﹏╥)o</button>
+	        <button id="updateBtn" type="button" class="btn btn-primary">修改 (╯‵□′)╯︵┻━┻</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	
     <%--静态包含js代码 --%>
     <%@ include file="/WEB-INF/jsp/common/js.jsp" %>
     
@@ -103,16 +163,18 @@
             
             });
             
-            
-            function initData(pageNum, pageSize) {
-            	
-            	var json = {
+            var json = {
         			// 可以看成传的参数
         			// 参数没传进去，太尴尬了。。
-        			pageNum:pageNum,
+        			pageNum:1,
         			pageSize:2
-        		}; // 记得加分号
+        	}; // 记得加分号
+            
+            function initData(pageNum) {
             	
+            	
+            	json.pageNum = pageNum;
+        		
         		var index = -1;
         		
             	// 1.发起ajax请求，获取分页器
@@ -169,8 +231,9 @@
         			
         			var td = $('<td></td>');
         			td.append('<button type="button" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>');
-        			td.append('<button type="button" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>');
-        			td.append('<button type="button" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>');
+        			// 加上class="updateClass",可以找到这个按钮，然后自定义属性roleId,取出这个角色的id
+        			td.append('<button type="button" roleId="'+role.id+'" class="updateClass btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>');
+        			td.append('<button type="button" roleId="'+role.id+'" class="deleteClass btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>');
         			
         			tr.append(td);
         			
@@ -219,6 +282,166 @@
 				
 				
         	}
+			// =================分页查询结束========================
+				
+				
+        	// ===================模糊查询==========================
+        	$('#queryBtn').click(function(){
+        		// 拿到了这个输入框中的值
+        		var condition = $('#condition').val();
+        		
+        		// 同样需要调用initData()函数来刷新页面，但是怎么把condition传进去呢？
+        		// json原本没有condition这个属性，这样可以给它加上这个属性，并赋值
+        		json.condition = condition;
+        		
+        		// 此时再初始化页面，就会出现带有condition筛选过的数据
+        		initData(1);
+        	});	
+        	// ====================================================
+        		
+        	// =========利用模态框执行添加操作=====================
+        		
+        		
+        	$('#addBtn').click(function(){
+        		$('#addModal').modal({
+        			show:true,
+        			backdrop:'static',
+        			keyboard:false
+        		});
+        	});	
+        		
+        		
+        	$('#saveBtn').click(function(){
+        		
+        		// 通过id选择器选到模态框，然后 " " 选到子元素，哪个input，通过name属性选到相应input，取出其中的值
+        		var name = $('#addModal input[name="name"]').val();
+        		
+        		// 通过Ajax把这个值传给后台，保存后刷新页面
+        		$.ajax({
+        			type:"post",
+        			url:"${PATH}/role/doAdd",
+        			data:{
+        				// 传进去的数据会自动匹配类型，或者封装为一个POJO，对应着其中的属性。
+        				name:name
+        			},
+        			beforeSend:function(result){
+        				return true;
+        			},
+        			success:function(result){
+        				// 返回的result是一个字符串，使用 "ok" 表示保存成功
+        				if(result=="ok"){
+        					// 弹层之后1s触发函数，关闭模态框
+        					layer.msg("保存成功",{time:1000},function(){
+        						$('#addModal').modal('hide');
+        						// 但这只是隐藏模态框，需要再把框中的值清除
+        						$('#addModal input[name="name"]').val(""); // 赋值空串即可
+        						initData(1); // 刷新到第一页，然后进行倒序排序
+        					});
+        				}else{
+        					layer.msg("保存失败");
+        				}
+        			}
+        		});
+        		
+        		// 倒序排序，自己做一下，不使用initData，还是在后台倒序查询比较合适
+        		
+        		
+        	});	
+        	// ========================================================	
+        		
+        	// =====================修改===============================
+        		// 这个按钮是后来刷新出来的，加不上click()这样的点击事件
+        		// $(".updateClass").click(function(){});	
+        	
+        		// tbody是一开始就有的元素，找到它，通过on函数，对里面updateClass样式类 加 click事件，
+        	$('tbody').on('click','.updateClass',function(){
+        		// alert("update");
+        		// 取出roleId
+        		// this是DOM对象，不能取出自定义的属性，先变成jQuery对象，然后取出相应的属性
+        		var roleId = $(this).attr("roleId");
+        		// alert(roleId);
+        		// 通过get请求先查到这个数据,第一个是url，第二个是传给后台的参数，以json的形式，第三个是回调函数，后台的返回值是result
+        		$.get("${PATH}/role/getRoleById",{id:roleId},function(result){
+        			// 同步开发后台返回数据一般在 域 中，异步开发返回数据一般在回调函数的 result
+        			
+        			// result是一个TRole对象，展示在模态框中
+        			$('#updateModal').modal({
+        				show:true,
+        				backdrop:'static',
+        				keyboard:false
+        			});
+        			
+        			// 把从数据库中 查到的数据 回显
+        			$('#updateModal input[name="name"]').val(result.name);
+        			
+        			// 把该条数据的id写在隐含域中，方便修改后存回数据库
+        			$('#updateModal input[name="id"]').val(result.id);
+        		});
+        	});
+        		
+        		// 上面只是查出这个数据，现在真的要去修改并存储进数据库中
+        	$('#updateBtn').click(function(){
+        		// 按照模态框中的文本进行修改
+        		
+        		// 按照自定义的属性名取出相应的值
+        		var name = $('#updateModal input[name="name"]').val();
+        		var id = $('#updateModal input[name="id"]').val();
+        		
+        		// post请求发给后端 1.访问url。2.传的参数 3.回调函数
+        		$.post("${PATH}/role/doUpdate",{name:name,id:id},function(result){
+        			// 返回的result是一个字符串，若是 "ok" , 代表修改成功
+        			if(result == "ok"){
+        				layer.msg("修改成功",{time:1000},function(){
+        					// 成功便关闭模态框
+        					$('#updateModal').modal('hide');
+        					// 刷新这一页的数据,之前刷新这一页时，页号便已记录在json的pageNum中
+        					initData(json.pageNum);
+        				});
+        			} else {
+        				layer.msg("修改失败");
+        			}
+        		});
+        	});
+        	// =====================修改===============================
+        		
+        		
+        	// =====================删除开始===============================	
+        		// 同修改
+        	$('tbody').on('click','.deleteClass',function(){
+        		
+        		
+        		//询问框
+            	layer.confirm('您是否要删除此条信息？', {
+            	  btn: ['确认','撤销'] //按钮
+            	}, function(index){
+            		
+            		// 取出id，在数据库删除此条信息，然后刷新页面
+            		var id = $('.deleteClass').attr("roleId");
+            		// 把id传给后台进行删除
+            		$.post("${PATH}/role/doDelete",{id:id},function(result){
+            			// 返回 “ok” 便是删除成功
+            			if(result=="ok") {
+            				layer.msg("删除成功",{time:1000},function(){
+            					
+            					// 刷新这一页的数据,之前刷新这一页时，页号便已记录在json的pageNum中
+            					initData(json.pageNum);
+            					
+            				});
+            			} else {
+            				layer.msg("删除失败");
+            			}
+            		});
+            		
+            	  	layer.close(index);
+            	}, function(index){
+            	  	// 撤销的话什么也不做，只是关闭弹出框。
+            		layer.close(index);
+            	});
+        	});
+        		
+        	// =====================删除结束===============================	
+        		
+        		
         </script>
   </body>
 </html>

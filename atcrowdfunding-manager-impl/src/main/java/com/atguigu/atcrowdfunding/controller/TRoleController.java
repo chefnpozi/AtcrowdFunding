@@ -28,7 +28,8 @@ public class TRoleController {
 	@ResponseBody
 	@RequestMapping("/role/loadData")
 	public PageInfo<TRole> loadData(@RequestParam(value="pageNum", required=false, defaultValue="1")Integer pageNum,
-									@RequestParam(value="pageSize", required=false, defaultValue="2")Integer pageSize) {
+									@RequestParam(value="pageSize", required=false, defaultValue="2")Integer pageSize,
+									@RequestParam(value="condition", required=false, defaultValue="")String condition) {
 		// 主页面已经加载完成，接收Ajax请求，返回page分页信息
 		
 		// 线程 绑定
@@ -36,7 +37,7 @@ public class TRoleController {
 		
 		// 存放参数的集合
 		HashMap<String, Object> paramMap = new HashMap<String, Object>();
-		// paramMap.put(key, value);
+		paramMap.put("condition", condition);
 		
 		// 拿到符合pageNum, pageSize的分页信息
 		PageInfo<TRole> page = roleService.listRolePage(paramMap);
@@ -44,5 +45,47 @@ public class TRoleController {
 		// 如果是对象，序列化为json串
 		// 如果是String，原样输出
 		return page;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/role/doAdd")
+	public String doAdd(TRole role) {
+		// 添加一条信息，把name封装在POJO中
+		roleService.saveTRole(role);
+		// 没理由失败，返回 "ok" 就完事了
+		return "ok";
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/role/getRoleById")
+	public TRole getRoleById(Integer id) {
+		// 拿到前端给的id
+		TRole role = roleService.getTRoleById(id);
+		// 没理由失败，返回 "ok" 就完事了
+		return role;
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/role/doUpdate")
+	public String doUpdate(TRole role) {
+		// 拿到前端给的name 和 id，封装成POJO，装进数据库
+		roleService.updateTRole(role);
+		// 没理由失败，返回 "ok" 就完事了
+		return "ok";
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/role/doDelete")
+	public String doDelete(Integer id) {
+		// 拿到前端给的name 和 id，封装成POJO，装进数据库
+		roleService.deleteTRole(id);
+		// 没理由失败，返回 "ok" 就完事了
+//		System.out.println("==================================");
+//		System.out.println(id);
+//		System.out.println("==================================");
+		return "ok";
 	}
 }
