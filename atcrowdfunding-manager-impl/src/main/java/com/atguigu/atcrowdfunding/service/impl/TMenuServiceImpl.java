@@ -63,4 +63,32 @@ public class TMenuServiceImpl implements TMenuService{
 		return menuList;
 	}
 
+	@Override
+	public List<TMenu> listAllTreeMenu() {
+		// 不用组合父子关系，直接返回所有数据
+		List<TMenu> allList = menuMapper.selectByExample(null);
+		return allList;
+	}
+
+	@Override
+	public void addTMenu(TMenu menu) {
+		// 保存
+		menuMapper.insertSelective(menu);
+	}
+
+	@Override
+	public void deleteTMenu(Integer id) {
+		menuMapper.deleteByPrimaryKey(id);
+	}
+
+	@Override
+	public TMenu getMenuById(Integer id) {
+		return menuMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public void updateTMenu(TMenu menu) {
+		menuMapper.updateByPrimaryKey(menu);
+	}
+
 }
