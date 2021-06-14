@@ -6,6 +6,37 @@
     <result column="adminid" jdbcType="INTEGER" property="adminid" />
     <result column="roleid" jdbcType="INTEGER" property="roleid" />
   </resultMap>
+  
+  
+  
+  <!-- List<Integer> getRoleIdByAdminId(Integer id); -->
+  <!-- id 是Integer 不是String 可以吗？
+  		对于int数据，传入格式为 String 或是 Integer 都可以
+   -->
+  <select id="getRoleIdByAdminId" resultType="java.lang.Integer">
+  		select roleid from t_admin_role where adminid=#{id}
+  </select>
+  
+  <!-- void saveRoleAndAdminRelationship(@Param("roleIds")Integer[] roleId, @Param("adminId")Integer adminId); -->
+  <insert id="saveRoleAndAdminRelationship" >
+  		<!-- insert into t_admin_role(adminid,roleid) values(1,5),(1,6),(1,7) -->
+  		insert into t_admin_role(adminid,roleid) values
+  		<foreach collection="roleIds" item="roleId" separator=",">
+  			(#{adminId},#{roleId})
+  		</foreach>
+  </insert>
+  
+  <!-- void deleteRoleAndAdminRelationship(@Param("roleIds")Integer[] roleId, @Param("adminId")Integer adminId); -->
+  <delete id="deleteRoleAndAdminRelationship">
+  		delete from t_admin_role where adminid = #{adminId} and roleid in 
+  		<!-- (5,6,7) -->
+  		<foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+  			#{roleId}
+  		</foreach>
+  </delete>
+  
+  
+  
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">

@@ -1,6 +1,7 @@
 package com.atguigu.atcrowdfunding.service;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.atguigu.atcrowdfunding.bean.TRole;
 import com.github.pagehelper.PageInfo;
@@ -16,5 +17,13 @@ public interface TRoleService {
 	void updateTRole(TRole role);
 
 	void deleteTRole(Integer id);
+
+	List<Integer> getRoleIdByAdminId(Integer id);
+
+	List<TRole> getAllRole();
+
+	void saveRoleAndAdminRelationship(Integer[] roleId, Integer adminId);
+
+	void deleteRoleAndAdminRelationship(Integer[] roleId, Integer adminId);
 
 }

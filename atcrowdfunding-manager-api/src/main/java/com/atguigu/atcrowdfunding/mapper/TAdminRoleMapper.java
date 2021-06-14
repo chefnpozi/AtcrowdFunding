@@ -27,4 +27,10 @@ public interface TAdminRoleMapper {
     int updateByPrimaryKeySelective(TAdminRole record);
 
     int updateByPrimaryKey(TAdminRole record);
+
+	List<Integer> getRoleIdByAdminId(Integer id);
+
+	void saveRoleAndAdminRelationship(@Param("roleIds")Integer[] roleId, @Param("adminId")Integer adminId);
+
+	void deleteRoleAndAdminRelationship(@Param("roleIds")Integer[] roleId, @Param("adminId")Integer adminId);
 }
