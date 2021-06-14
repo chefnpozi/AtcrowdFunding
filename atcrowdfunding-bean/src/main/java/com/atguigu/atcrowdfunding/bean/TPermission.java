@@ -1,5 +1,8 @@
 package com.atguigu.atcrowdfunding.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TPermission {
     private Integer id;
 
@@ -10,6 +13,9 @@ public class TPermission {
     private String icon;
 
     private Integer pid;
+    
+    // 迭代父对象，然后通过这个属性，拿到它的孩子
+    private List<TPermission> children = new ArrayList<TPermission>();
 
     public Integer getId() {
         return id;
@@ -50,4 +56,12 @@ public class TPermission {
     public void setPid(Integer pid) {
         this.pid = pid;
     }
+
+	public List<TPermission> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<TPermission> children) {
+		this.children = children;
+	}
 }

@@ -2,6 +2,7 @@ package com.atguigu.atcrowdfunding.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -11,9 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.atguigu.atcrowdfunding.bean.TAdmin;
+import com.atguigu.atcrowdfunding.bean.TRole;
 import com.atguigu.atcrowdfunding.service.TAdminService;
+import com.atguigu.atcrowdfunding.service.TRoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -22,6 +26,9 @@ public class TAdminController {
 	
 	@Autowired
 	TAdminService adminService;
+	
+	@Autowired
+	TRoleService roleService;
 
 	// 日志
 	Logger log = LoggerFactory.getLogger(TAdminController.class);
@@ -128,5 +135,55 @@ public class TAdminController {
 		// 删除该用户之后，重定向到index界面的 pageNum页面
 		// 重定向是找的另一个 request mapping 不是根据spring前缀后缀字符串拼接
 		return "redirect:/admin/index?pageNum="+pageNum;
+	}
+	
+	
+	@RequestMapping("/admin/toAssign")
+	public String toAssign(Integer id, Model model) {
+		// 跳转到该用户的修改权限的页面
+		
+		// 1.根据用户id查询已经拥有角色的id
+		List<Integer> roleIdList = roleService.getRoleIdByAdminId(id);
+		
+		// 2.查询所有角色
+		List<TRole> roleList = roleService.getAllRole();
+		
+		// 3.将所有角色进行划分
+		ArrayList<TRole> assignList = new ArrayList<TRole>();
+		ArrayList<TRole> unAssignList = new ArrayList<TRole>();
+		
+		// 放入请求域，放置的是集合的引用
+		model.addAttribute("assignList", assignList);
+		model.addAttribute("unAssignList", unAssignList);
+		
+		for (TRole tRole : roleList) {
+			if (roleIdList.contains(tRole.getId())) {
+				// 如果该角色属于当前用户的角色集合
+				assignList.add(tRole); 		// 4.已分配角色的集合
+			} else {
+				unAssignList.add(tRole);	// 5.未分配角色的集合
+			}
+		}
+		
+		return "admin/assignRole";
+	}
+	
+	@ResponseBody
+	@RequestMapping("/admin/doAssign")
+	public String doAssign(Integer[] roleId, Integer adminId) {
+		// 接收 这个用户的id，和要分配给他的roleId
+		System.out.println(adminId);
+		roleService.saveRoleAndAdminRelationship(roleId, adminId);
+		return "ok";
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/admin/doUnAssign")
+	public String doUnAssign(Integer[] roleId, Integer adminId) {
+		// 接收 这个用户的id，和要取消分配给他的这些roleId
+		// System.out.println(adminId);
+		roleService.deleteRoleAndAdminRelationship(roleId, adminId);
+		return "ok";
 	}
 }
