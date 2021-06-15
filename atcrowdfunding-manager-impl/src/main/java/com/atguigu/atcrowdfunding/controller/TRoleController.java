@@ -1,6 +1,7 @@
 package com.atguigu.atcrowdfunding.controller;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.atguigu.atcrowdfunding.bean.TRole;
 import com.atguigu.atcrowdfunding.service.TRoleService;
+import com.atguigu.atcrowdfunding.util.Datas;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -18,6 +20,8 @@ public class TRoleController {
 
 	@Autowired
 	TRoleService roleService;
+	
+	
 	
 	@RequestMapping("/role/index")
 	public String index() {
@@ -87,5 +91,27 @@ public class TRoleController {
 //		System.out.println(id);
 //		System.out.println("==================================");
 		return "ok";
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/role/doAssignPermissionToRole")
+	public String doAssignPermissionToRole(Integer roleId, Datas ds) {
+		// 给为roleId的角色分配 permissionId为ids中的权限
+		
+		
+		roleService.doAssignPermissionToRole(roleId, ds.getIds());
+		
+		return "ok";
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/role/getPermissionIdByRoleId")
+	public List<Integer> getPermissionIdByRoleId(Integer roleId) {
+		
+		List<Integer> list = roleService.getPermissionIdByRoleId(roleId);
+		
+		return list;
 	}
 }

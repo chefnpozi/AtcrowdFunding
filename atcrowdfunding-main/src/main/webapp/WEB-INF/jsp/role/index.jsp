@@ -142,6 +142,32 @@
 	  </div>
 	</div>
 	
+	<!-- 执行修改权限操作，Modal -->
+	<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">给角色分配权限(*^▽^*)</h4>
+	      </div>
+	      <div class="modal-body">
+	      
+	        
+	        
+				 	<!-- 在这个框中生成树 -->
+ 					<ul id="treeDemo" class="ztree">
+				  
+			
+			
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭o(╥﹏╥)o</button>
+	        <button id="assignBtn" type="button" class="btn btn-primary">分配 (╯‵□′)╯︵┻━┻</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
 	
     <%--静态包含js代码 --%>
     <%@ include file="/WEB-INF/jsp/common/js.jsp" %>
@@ -230,7 +256,8 @@
         			tr.append('<td>'+role.name+'</td>');
         			
         			var td = $('<td></td>');
-        			td.append('<button type="button" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>');
+        			// 分配和取消权限，使用模态框实现
+        			td.append('<button type="button" roleId="'+role.id+'" class="assignPermissionClass btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>');
         			// 加上class="updateClass",可以找到这个按钮，然后自定义属性roleId,取出这个角色的id
         			td.append('<button type="button" roleId="'+role.id+'" class="updateClass btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>');
         			td.append('<button type="button" roleId="'+role.id+'" class="deleteClass btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>');
@@ -441,6 +468,119 @@
         		
         	// =====================删除结束===============================	
         		
+        		
+        	// =====================分配和取消分配权限===========开始=========
+        	
+        	 var RId = ''; // 声明一个全局变量
+        		// 后来刷新出来的按钮，不能加click事件
+        	$("tbody").on("click",".assignPermissionClass",function(){
+        		// 弹出模态框
+        		$('#assignModal').modal({
+        			show:true,
+        			keyboard:false,
+        			backdrop:'static'
+        		});
+        		// roleId 挂在了分配按钮上 ,赋给全局变量
+        		RId = $(this).attr("roleId");
+        		
+        		initTree(); // 初始化在模态框中
+        	});
+        	
+        	
+        	function initTree(){
+        		
+        		// 对树的一些设置
+        		var setting = {
+        				check: {
+                			// 让树中的节点前面有了复选框
+                			enable:true
+                		},
+                		data: {
+                			simpleData: {
+                				enable:true,
+                				// 父节点为pid
+                				pIdKey:"pid"
+                			},
+                			key: {
+                				url:"xxx",
+                				// 显示的字段不是name，而是title
+                				name:"title"
+                			}
+                		},
+                		view: {
+                			addDiyDom: function(treeId, treeNode){
+            					// 通过节点tid 拼接 _ico 拿到这个 span ，把之前fa样式删掉
+            					$("#"+treeNode.tId+"_ico").removeClass();//.addClass();
+            					// 找到这个 span，在前面加一个新的bootstrap的span，treeNode.icon是bootstrap的一种样式
+            					$("#"+treeNode.tId+"_span").before("<span class='"+treeNode.icon+"'></span>")
+            				}
+                		}
+        		};
+        		
+        		// 加载 树需要的一些数据
+        		$.get("${PATH}/permission/getAllPermission",function(result){
+        			// result是permission对象集合序列化为json的结果
+        			// 生成树,并返回这棵树的对象
+        			var treeObj = $.fn.zTree.init($('#treeDemo'), setting, result);
+        			// 展开树
+        			treeObj.expandAll(true);
+        			
+        			// 回显此角色所拥有的所有权限、记得写在这个get请求里面，这样才是串行
+        			$.get("${PATH}/role/getPermissionIdByRoleId",{roleId:RId},function(permissionIds){
+        				// result是permissionId的集合
+        				$.each(permissionIds, function(index, pid){
+        					
+        					var permissionId = pid;
+        					// 看API
+            				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+            				// 拿到这棵树中 属性id = permissionId的这个节点，第三个参数是指定在那个节点下进行搜索，不指定则进行全局搜索
+            				var node = treeObj.getNodeByParam("id", permissionId, null);
+            				// 给这个节点打钩，要打钩，不要联动（父子节点），不要回调。
+            				treeObj.checkNode(node, true, false , false);
+        				});
+        			});
+        		});
+        		
+        	}
+        	
+        	// 点击提交按钮,模态框一直隐藏在幕后，并不是后来刷新出来的，可以调用click函数
+        	$('#assignBtn').click(function(){
+        		// 目标 ： 给当前角色分配权限，需要知道是哪个角色 -> roleId , 分配那些权限 -> permissions
+        		var json = {
+        			roleId:RId
+        		};
+        		// 拿到我们的树对象
+        		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        		// 拿到树中选中的节点，这些节点是permission对象集合序列化后的结果
+        		var permissions = treeObj.getCheckedNodes(true);
+        		
+        		// 目前我们不提交空菜单
+        		// 把permissions拼进json中，发给后台
+        		$.each(permissions, function(index, permission){
+        			// 主要拼进去permission的id就好
+        			var permissionId = permission.id;
+        			// json中的ids不用事先声明，往json中传入参数会直接声明
+        			// .ids[] 不好，以多重数组的方式传参
+        			json['ids['+index+']'] = permissionId;
+        		});
+        		// ids数组已传入json
+        		// 1.传参时，使用permissionId作为形参，或是Datas，打印数据，看拿到了吗
+        		// 2.传的ids是和Datas中的ids对上的
+        		$.post("${PATH}/role/doAssignPermissionToRole", json, function(result){
+        			// 返回的是 "ok"，表示保存  角色  和  权限  之间的关系成功
+        			if(result=="ok"){
+        				layer.msg("分配权限成功");
+        				
+        				$('#assignModal').modal('hide');
+        			} else {
+        				layer.msg("分配权限失败");
+        				
+        				$('#assignModal').modal('hide');
+        			}
+        		});
+        	});
+        	
+        	// =====================分配和取消分配权限===========结束=========
         		
         </script>
   </body>

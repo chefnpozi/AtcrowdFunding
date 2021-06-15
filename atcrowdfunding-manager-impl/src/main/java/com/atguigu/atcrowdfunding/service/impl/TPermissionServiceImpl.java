@@ -40,4 +40,10 @@ public class TPermissionServiceImpl implements TPermissionService {
 	public void updateTPermission(TPermission permission) {
 		permissionMapper.updateByPrimaryKeySelective(permission);
 	}
+
+	@Override
+	public List<TPermission> getAllPermission() {
+		// 查出所有
+		return permissionMapper.selectByExample(null);
+	}
 }

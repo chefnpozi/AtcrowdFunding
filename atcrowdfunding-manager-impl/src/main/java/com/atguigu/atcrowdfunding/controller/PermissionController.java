@@ -65,4 +65,13 @@ public class PermissionController {
 		permissionService.updateTPermission(permission);
 		return "ok";
 	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/permission/getAllPermission")
+	public List<TPermission> getAllPermission() {
+		// 返回所有permission对象的集合
+		List<TPermission> list = permissionService.getAllPermission();
+		return list;
+	}
 }

@@ -16,4 +16,6 @@ public interface TPermissionService {
 
 	void updateTPermission(TPermission permission);
 
+	List<TPermission> getAllPermission();
+
 }
