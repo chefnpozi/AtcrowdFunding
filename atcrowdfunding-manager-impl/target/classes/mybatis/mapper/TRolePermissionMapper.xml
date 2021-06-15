@@ -6,6 +6,30 @@
     <result column="roleid" jdbcType="INTEGER" property="roleid" />
     <result column="permissionid" jdbcType="INTEGER" property="permissionid" />
   </resultMap>
+  
+  <!-- void doAssignPermissionToRole(@Param("roleId")Integer roleId, @Param("permissionIds")List<Integer> ids); -->
+  <insert id="doAssignPermissionToRole">
+  		<!-- id作为主键自动增长 -->
+  		<!-- insert into t_admin_role(adminid,roleid) values(1,5),(1,6),(1,7) -->
+  		insert into t_role_permission(roleid,permissionid) values
+  		<foreach collection="permissionIds" item="permissionId" separator=",">
+  			(#{roleId},#{permissionId})
+  		</foreach>
+  </insert>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
