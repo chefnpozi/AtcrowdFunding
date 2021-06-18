@@ -24,7 +24,7 @@
 		<div class="layui-body">
 			<!-- 内容主体区域 -->
 			<div style="padding: 15px;">
-				<h1>欢迎登陆武林秘籍管理系统</h1>
+				<h1>您无权访问</h1>
 			</div>
 		</div>
 		<div class="layui-footer"></div>
