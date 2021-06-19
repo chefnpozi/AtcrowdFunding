@@ -42,7 +42,7 @@ public class DispatcherController {
 		return "index";
 	}
 
-	@RequestMapping("/login")
+	@RequestMapping("/toLogin")
 	public String login() {
 		log.debug("跳转到登录主页面...");
 		return "login";
@@ -57,7 +57,7 @@ public class DispatcherController {
 		// 多次加载页面，只需加载一次菜单树
 		if(session == null) {
 			// session为null，去登录一下，然后创建session
-			return "redirect:/login";
+			return "redirect:/toLogin";
 		}
 		// 目前session不为空，先去拿数据，在判断数据是否存在
 		List<TMenu> menuList = (List<TMenu>)session.getAttribute("menuList");

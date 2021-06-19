@@ -116,7 +116,7 @@ h3.break>a {
             <div id="navbar" class="navbar-collapse collapse" style="float:right;">
               <ul class="nav navbar-nav navbar-right">
                 <%-- 点击登录，将会转到login这个映射，即去找login（）这个方法 --%>
-                <li><a href="login">登录</a></li>
+                <li><a href="${PATH}/toLogin">登录</a></li>
                 <li><a href="reg.html">注册</a></li>
               </ul>
             </div>

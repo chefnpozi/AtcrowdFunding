@@ -1,7 +1,14 @@
 package com.atguigu.atcrowdfunding.config;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -34,20 +42,46 @@ public class AtcrowdFundingSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		// super.configure(http);
 		
-		http.authorizeRequests().antMatchers("/static/**","/welcome.jsp").permitAll()
+		http.authorizeRequests().antMatchers("/static/**","/welcome.jsp", "/toLogin").permitAll()
 		.anyRequest().authenticated();//剩下都需要认证
 		 
 		// /login.jsp==POST  用户登陆请求发给Security
-		http.formLogin().loginPage("/login")
+		http.formLogin().loginPage("/toLogin")	// 登录失败找这个request mapping
 		.usernameParameter("loginacct").passwordParameter("userpswd")
-		.defaultSuccessUrl("/main").permitAll();
+		.loginProcessingUrl("/login")	// /login是spring security 自己的request mapping，执行登录时的校验
+		.defaultSuccessUrl("/main")
+		.permitAll();
 		 
 		http.csrf().disable();
 		
-		// 找我们的映射
+		// 找我们的映射，登出框架默认是logout
 		http.logout().logoutSuccessUrl("/index");
-		 
-		//http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+		
+		// 访问被拒的话，抛出异常，然后执行这条语句
+		http.exceptionHandling().accessDeniedHandler(new AccessDeniedHandler() {
+
+			// servlet的dependency没有导入 会导致找不到HttpServletRequest
+			@Override
+			public void handle(HttpServletRequest request, HttpServletResponse response,
+					AccessDeniedException accessDeniedException) throws IOException, ServletException {
+				//   X-Requested-With: XMLHttpRequest
+				// 看前端发给我的是同步请求还是异步请求
+				String Type = request.getHeader("X-Requested-With");
+				System.out.println("================================================");
+				System.out.println(Type);
+				System.out.println("================================================");
+				// 处处是细节 "XMLHttpRequest".equals(Type),因为同步请求getHeader得到的头信息是null
+				if ("XMLHttpRequest".equals(Type)) {
+					// 证明是异步请求，返回前台一个“403”
+					response.getWriter().print("403"); // 403 权限不够，访问被拒绝
+				} else {
+					// 证明是同步请求，转发到一个错误页面
+					request.getRequestDispatcher("/WEB-INF/jsp/error/error403.jsp").forward(request, response);
+				}
+				
+			}
+			
+		});
 
 		http.rememberMe();
 	}

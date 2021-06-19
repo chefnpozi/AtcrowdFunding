@@ -3,6 +3,8 @@ package com.atguigu.atcrowdfunding.component;
 import java.util.HashSet;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +37,8 @@ public class SecurityUserDetailServiceImpl implements UserDetailsService {
 	@Autowired
 	TPermissionMapper permissionMapper;
 	
+	Logger log = LoggerFactory.getLogger(SecurityUserDetailServiceImpl.class);
+	
 	/*
 	 * 这一步实际上是做了我们自己写的doLogin，查询数据库，对来访者的信息进行核实，通过传进来的username，查出数据库中的那一条信息，
 	 * 封装为UserDetails返回
@@ -59,9 +63,12 @@ public class SecurityUserDetailServiceImpl implements UserDetailsService {
 			// 通过adminId --> 用户角色关系表join角色表 --> 角色集合信息
 			List<TRole> roleList = roleMapper.roleListByAdminId(adminId);
 			
+			log.debug("用户角色集合:{}",roleList);
+			
 			// 3.查询权限集合
 			// 通过adminId --> 权限集合信息   	==	 adminId --> 用户表 --> 用户角色关系表 --> 角色表 --> 角色权限关系表 --> 权限表 --> permission
 			List<TPermission> permissionList = permissionMapper.permissionListByAdminId(adminId);
+			log.debug("用户权限集合:{}",permissionList);
 			
 			// 4.构建用户所有权限集合 ==> （角色+权限）
 			// 把上述的两个集合中的元素封装成 权限对象加入此集合
@@ -77,9 +84,11 @@ public class SecurityUserDetailServiceImpl implements UserDetailsService {
 				// permission.getName() 拿到的是带有前缀的权限
 				authoritis.add(new SimpleGrantedAuthority(permission.getName()));
 			}
+			log.debug("用户总权限集合:{}",authoritis);
 			
 			// 形参 ： 账户名 密码 权限集合
-			return new User(admin.getLoginacct(), admin.getUserpswd(), authoritis);
+//			return new User(admin.getLoginacct(), admin.getUserpswd(), authoritis);
+			return new TSecurityAdmin(admin, authoritis);
 		}else {
 			return null;
 		}

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -11,7 +12,10 @@
 				<div class="btn-group">
 				<!-- ${sessionScope.loginAdmin.loginacct} 从session域中把该用户的用户名取出来 -->
 				  <button type="button" class="btn btn-default btn-success dropdown-toggle" data-toggle="dropdown">
-					<i class="glyphicon glyphicon-user"></i> ${sessionScope.loginAdmin.loginacct} <span class="caret"></span>
+					<i class="glyphicon glyphicon-user"></i> 
+					<!-- 原先是从session域中取数据，现在整个login都被spring security 管理，session域中已经没有数据了 -->
+					<security:authentication property="name"/>
+					<span class="caret"></span>
 				  </button>
 					  <ul class="dropdown-menu" role="menu">
 						<li><a href="#"><i class="glyphicon glyphicon-cog"></i> 个人设置</a></li>

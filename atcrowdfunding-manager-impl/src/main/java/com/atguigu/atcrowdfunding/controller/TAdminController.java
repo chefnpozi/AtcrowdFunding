@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +72,7 @@ public class TAdminController {
 		return "admin/add";
 	}
 	
+	// @PreAuthorize("hasRole('PM - 项目经理')")
 	@RequestMapping("/admin/doAdd")
 	public String doAdd(TAdmin admin) {
 		// 实际传的是 账户名 用户名 邮箱 三个信息，但是Spring帮我们封装成一个POJO，方便我们处理
