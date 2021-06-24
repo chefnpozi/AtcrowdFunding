@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: cloud-provider-user
+    
+server:
+  port: 9000  
+  
+# 指定注册到哪个注册中心
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+      #注册中心的端口号
+  instance:
+    prefer-ip-address: true #注册自己服务使用ip的方式

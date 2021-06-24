@@ -1,0 +1,5 @@
+swagger2: 
+  enable: true #默认开启swagger功能
+  
+server:
+  port: 80

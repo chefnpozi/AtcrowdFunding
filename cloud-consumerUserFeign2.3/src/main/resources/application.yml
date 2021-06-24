@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: cloud-consumerUserFeign2.3
+    
+server:
+  port: 7000  
+  
+# 指定注册到哪个注册中心
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+      #注册中心的端口号
+  instance:
+    prefer-ip-address: true #注册自己服务使用ip的方式
+
+feign:
+  hystrix:
+    enabled: true #默认false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream # 访问/actuator/hystrix.stream能看到不断更新的监控流
+        
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "localhost"
