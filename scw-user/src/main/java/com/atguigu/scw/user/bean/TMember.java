@@ -1,5 +1,8 @@
 package com.atguigu.scw.user.bean;
 
+import lombok.ToString;
+
+@ToString
 public class TMember {
     private Integer id;
 
@@ -11,7 +14,8 @@ public class TMember {
 
     private String email;
 
-    private String authstatus;
+    // 新注册的账号，默认值为0
+    private String authstatus = "0";
 
     private String usertype;
 
