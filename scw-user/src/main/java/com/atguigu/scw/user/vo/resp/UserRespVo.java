@@ -1,12 +1,14 @@
 package com.atguigu.scw.user.vo.resp;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 @ApiModel
-public class UserRespVo {
+public class UserRespVo implements Serializable {
 
 	private String loginacct;
 

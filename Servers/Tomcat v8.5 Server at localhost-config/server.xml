@@ -149,7 +149,7 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
-      <Context docBase="atcrowdfunding-main" path="/atcrowdfunding-main" reloadable="true" source="org.eclipse.jst.jee.server:atcrowdfunding-main"/></Host>
+      <Context docBase="atcrowdfunding-main" path="/atcrowdfunding-main" reloadable="true" source="org.eclipse.jst.jee.server:atcrowdfunding-main"/><Context docBase="alipay.trade.page.pay-JAVA-UTF-8" path="/alipay.trade.page.pay-JAVA-UTF-8" reloadable="true" source="org.eclipse.jst.jee.server:alipay.trade.page.pay-JAVA-UTF-8"/></Host>
     </Engine>
   </Service>
 </Server>

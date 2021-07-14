@@ -15,9 +15,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.atguigu.scw.user.bean.TMember;
+import com.atguigu.scw.user.bean.TMemberAddress;
+import com.atguigu.scw.user.bean.TMemberAddressExample;
 import com.atguigu.scw.user.bean.TMemberExample;
 import com.atguigu.scw.user.enums.UserExceptionEnum;
 import com.atguigu.scw.user.exception.UserException;
+import com.atguigu.scw.user.mapper.TMemberAddressMapper;
 import com.atguigu.scw.user.mapper.TMemberMapper;
 import com.atguigu.scw.user.service.TMemberService;
 import com.atguigu.scw.user.vo.req.UserRegistVo;
@@ -36,6 +39,9 @@ public class TMemberServiceImpl implements TMemberService{
 	@Autowired
 	StringRedisTemplate stringRedisTemplate;
 
+	@Autowired
+	TMemberAddressMapper memberAddressMapper;
+	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.REPEATABLE_READ) // 传播级别和隔离是做什么
 	public int saveTMember(UserRegistVo vo) {
@@ -101,5 +107,23 @@ public class TMemberServiceImpl implements TMemberService{
 		stringRedisTemplate.opsForValue().set(accessToken, member.getId().toString());
 		
 		return vo;
+	}
+
+	@Override
+	public TMember getMemberById(Integer id) {
+		// memberId 是主键
+		TMemberExample example = new TMemberExample();
+		example.createCriteria().andIdEqualTo(id);
+		List<TMember> list = memberMapper.selectByExample(example);
+		TMember member = list.get(0);
+		return member;
+	}
+
+	@Override
+	public List<TMemberAddress> listAddress(int memberId) {
+		TMemberAddressExample example = new TMemberAddressExample();
+		example.createCriteria().andMemberidEqualTo(memberId);
+		
+		return memberAddressMapper.selectByExample(example);
 	}
 }

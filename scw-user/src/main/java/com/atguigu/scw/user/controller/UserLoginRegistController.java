@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.scw.user.bean.TMember;
@@ -49,7 +50,7 @@ public class UserLoginRegistController {
 			@ApiImplicitParam(value="用户密码",name="password")
 	})
 	@PostMapping("/login")
-	public AppResponse<UserRespVo> login(String loginacct,String password){
+	public AppResponse<UserRespVo> login(@RequestParam("loginacct")  String loginacct, @RequestParam("password") String password){
 		
 		try {
 			
