@@ -186,7 +186,7 @@
                                 </div>
                                 <div class="col-md-12 column" style="padding:0 120px;">
                                     
-                                    <div class="radio" th:each="userAddressVo:${memberAddressList}" onclick="$('#addressPanel').hide()">
+                                    <div class="radio" th:each="userAddressVo:${session.memberAddressList}" onclick="$('#addressPanel').hide()">
                                       <label>
                                         <input type="radio" name="address" th:value="${userAddressVo.address}" checked>
                                         [[${userAddressVo.address}]]

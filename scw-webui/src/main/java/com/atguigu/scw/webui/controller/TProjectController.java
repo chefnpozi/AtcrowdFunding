@@ -71,6 +71,8 @@ public class TProjectController {
 		
 		// 将 addressList 装入 session 域
 		session.setAttribute("memberAddressList", addressList);
+		System.out.println("用户的地址是：");
+		System.out.println(addressList);
 		
 		// session域是页面共享的，多次购买会跳转到此页面，取出num来更新总价格
 		ReturnPayConfirmVo returnPayConfirmVo = (ReturnPayConfirmVo)session.getAttribute("returnPayConfirmVoSession");

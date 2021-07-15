@@ -10,13 +10,15 @@ import com.atguigu.scw.webui.vo.resp.TOrder;
 @Component
 public class TOrderServiceFeignExceptionHandler implements TOrderServiceFeign {
 
-	
+	@Override
 	public AppResponse<TOrder> saveOrder(OrderInfoSubmitVo orderInfoSubmitVo) {
-		AppResponse<TOrder> resp=AppResponse.fail(null);
-		resp.setMsg("调用远程服务保存订单失败");
 		
-		
-		return resp;
+		AppResponse<TOrder> response = AppResponse.fail(null);
+		response.setMsg("调用远程服务【保存订单】失败");
+		return response;
 	}
+
+	
+	
 
 }

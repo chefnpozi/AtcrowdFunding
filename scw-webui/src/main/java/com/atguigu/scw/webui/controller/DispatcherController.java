@@ -64,6 +64,7 @@ public class DispatcherController {
 			return "redirect:/index";
 		}else
 		{
+			// 重定向到之前的界面
 			return "redirect:"+preUrl;
 		}
 		

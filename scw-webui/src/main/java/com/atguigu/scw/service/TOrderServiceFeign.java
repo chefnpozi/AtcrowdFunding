@@ -13,7 +13,9 @@ import com.atguigu.scw.webui.vo.resp.TOrder;
 @FeignClient(value="SCW-ORDER",fallback=TOrderServiceFeignExceptionHandler.class)
 public interface TOrderServiceFeign {
 
+
 	@RequestMapping("/order/saveOrder")
-	AppResponse<TOrder> saveOrder(@RequestBody  OrderInfoSubmitVo orderInfoSubmitVo);
+	public AppResponse<TOrder> saveOrder(@RequestBody OrderInfoSubmitVo orderInfoSubmitVo);
+	
 
 }

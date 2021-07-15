@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import lombok.ToString;
+@ToString
 @ApiModel
 public class UserAddressVo implements Serializable {
 
